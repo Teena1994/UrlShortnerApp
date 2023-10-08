@@ -1,0 +1,19 @@
+<div class="main-container">
+<div class="app-container">
+  <header>
+    <h1>URL Shortener</h1>
+  </header>
+  <main>
+    <section class="url-form">
+      <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()">
+        <label for="longUrl">Enter Long URL:</label>
+        <input type="text" id="longUrl"  formControlName="longUrl" placeholder="https://www.example.com">
+        <button type="submit">Shorten</button>
+      </form>
+    </section>
+    <section class="shortened-urls">
+      <div class="shortened-url" id="shortUrl">Shortened URL: <a href="#"></a></div>
+    </section>
+  </main>
+</div>
+</div>
