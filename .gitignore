@@ -1,0 +1,19 @@
+# Ignore node_modules in both backend and frontend
+/app/node_modules/
+/client/node_modules/
+
+# Ignore build artifacts, logs, and other files
+/app/dist/
+/client/dist/
+/app/*.log
+/client/*.log
+
+# Ignore environment-specific files
+.env
+.env.local
+.env.production
+
+# Ignore editor-specific files
+.vscode/
+.idea/
+
