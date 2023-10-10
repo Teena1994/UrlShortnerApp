@@ -27,9 +27,9 @@ const getShortenUrl = async (req, res) => {
     }
   } catch (error) {
     console.error('Error shortening URL: error in getShortenUrl()');
-    res.status(500).json({ success: false, 
+    res.status(400).json({ success: false, 
                            error_code: error.code ? error.code: 'UNKNOWN', 
-                           error_msg: error.cause? error.cause: error.message });
+                           error_message: error.cause? error.cause: error.message });
 
   }
 };
@@ -56,7 +56,7 @@ const createShortUrl = async (url, res) => {
     if (errorObj.success === false) {
       res.status(400).json({ success: false, error_message: errorObj.error_msg, error_code: errorObj.error_code });
     } else {
-      res.status(400).json({ success: false,error_code: err.code ? err.code: 'UNKNOWN', error_msg: err.message });
+      res.status(400).json({ success: false,error_code: err.code ? err.code: 'UNKNOWN', error_message: err.message });
     }
   });
 }

@@ -1,0 +1,101 @@
+{
+	"info": {
+		"_postman_id": "a14bd2c1-08a1-4b64-becf-e25006982892",
+		"name": "IDASO",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "28785935"
+	},
+	"item": [
+		{
+			"name": "API to get short url",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/shortenUrl?url=https://www.google.com/search?q=dogs",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"shortenUrl"
+					],
+					"query": [
+						{
+							"key": "url",
+							"value": "https://www.google.com/search?q=dogs"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "New Request",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/api/shortenUrl/?longUrl=https://www.google.com/search?q=cats%26oq=cats",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"shortenUrl",
+								""
+							],
+							"query": [
+								{
+									"key": "longUrl",
+									"value": "https://www.google.com/search?q=cats&oq=cats"
+								}
+							]
+						}
+					},
+					"status": "Internal Server Error",
+					"code": 500,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Access-Control-Allow-Origin",
+							"value": "*"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "42"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"2a-eSl5YjFauLVh7omZi4se2ZScFJg\""
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 05 Oct 2023 11:02:30 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"success\": false,\n    \"message\": \"Server error\"\n}"
+				}
+			]
+		}
+	]
+}
