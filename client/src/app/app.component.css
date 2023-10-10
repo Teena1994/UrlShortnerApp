@@ -1,0 +1,32 @@
+.input-container {
+    display: flex;
+    align-items: center;
+}
+
+.input-container input {
+    margin-right: 10px;
+}
+
+.shortner-url-date {
+    font-size: 14px;
+    margin-right: 15px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.newtab {
+    height: 15px;
+    padding-left: 2%;
+    cursor: pointer;
+    padding-right: 2%;
+}
+
+.shortened-text {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    background-color: #fff;
+    padding: 10px;
+    font-weight: bold !important;
+    font-size: 18px !important;
+  }
+ 

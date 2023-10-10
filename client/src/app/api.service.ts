@@ -6,12 +6,12 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class ApiService {
-  private apiUrl = 'https://localhost:3000/api/shortenUrl'; 
+  private apiUrl = 'http://localhost:3000/api/shortenUrl'; 
 
   constructor(private http: HttpClient) {}
 
   // Fetch Url Details
-  getUrlDetails(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/`, {url: data});
+  getUrlDetails(urlData: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}?url=${urlData}`,{});
   }
 }

@@ -1,19 +1,37 @@
 <div class="main-container">
-<div class="app-container">
-  <header>
-    <h1>URL Shortener</h1>
-  </header>
-  <main>
-    <section class="url-form">
-      <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()">
-        <label for="longUrl">Enter Long URL:</label>
-        <input type="text" id="longUrl"  formControlName="longUrl" placeholder="https://www.example.com">
-        <button type="submit">Shorten</button>
-      </form>
-    </section>
-    <section class="shortened-urls">
-      <div class="shortened-url" id="shortUrl">Shortened URL: <a href="#"></a></div>
-    </section>
-  </main>
-</div>
+  <div class="app-container">
+    <header>
+      <h1>URL Shortener</h1>
+    </header>
+    <main>
+      <div class="url-form" [hidden]="shorturlSuccess">
+        <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()">
+          <label for="longUrl">Enter Long URL:</label>
+          <div class="input-container">
+            <input type="text" id="longUrl" formControlName="longUrl" placeholder="https://www.example.com">
+            <button type="submit">Shorten</button>
+          </div>
+        </form>
+        <div class="shortened-text" [hidden]="shorturlSuccess">Unlock the power of URL Shortener and make sharing easier
+          than ever. Enter your long URL, and watch it transform into a stylish, shareable, and shortened link in an
+          instant! </div>
+      </div>
+
+      <div *ngIf="shorturlSuccess"  class="url-form">
+          <label for="shortUrl">Short URL:  </label>
+          <div class="input-container">
+            <input type="text" id="shortUrl" style ="width: 70%;" class="url-form input" [value]="shortUrl" readonly>
+            <button class="btn btn-primary btn-xs" (click)="openNewTab()" style="margin-right: 5px;">
+              Redirect
+            </button>
+            <button class="btn btn-primary btn-xs"
+            (click)="copyUrl()" [disabled]="isCopied">
+            {{ isCopied ? 'Copied!' : 'Copy URL' }}
+          </button>
+        </div>
+        <div class="shortner-url-date"> Generated {{ updatedDate }}</div>
+        <button class="btn btn-primary btn-sm ml-auto" (click)="goBack()"> Go Back </button>
+      </div>
+    </main>
+  </div>
 </div>
