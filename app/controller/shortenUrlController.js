@@ -14,68 +14,64 @@ const getShortenUrl = async (req, res) => {
     // Extract the URL to be shortened from the request parameters
     const { url } = req.query;
 
-    // Store data in the cache with a TTL of 60 seconds
-    myCache.set('myKey', 'myValue', 60);
-
-    const urlListFromMongo = await shortenUrlListModel.findOne({originalUrl: url},{originalUrl:1, shortenUrl:1, date: 1});
-
-    if(urlListFromMongo !== null){
-      res.status(200).json({ success: true, shortUrl: urlListFromMongo.shortenUrl, orginalUrl: urlListFromMongo.originalUrl, updatedDate: urlListFromMongo.date});
-    } else{
+    const urlListFromMongo = await shortenUrlListModel.findOne({ originalUrl: url }, { originalUrl: 1, shortenUrl: 1, date: 1 });
+    if (urlListFromMongo !== null) {
+      res.status(200).json({ success: true, shortUrl: urlListFromMongo.shortenUrl, orginalUrl: urlListFromMongo.originalUrl, updatedDate: urlListFromMongo.date });
+    } else {
       let shortUrlDetails = await createShortUrl(url, res);
-        if(shortUrlDetails.success){
-          res.status(200).json({ success: true, shortUrl: shortUrlDetails.shortenUrl, orginalUrl: shortUrlDetails.originalUrl, updatedDate: 'just now' });
-        } else {
-          res.status(400).json({ success: false, error_message: shortUrlDetails.error_msg, error_code: shortUrlDetails.error_code });
-        }
-    }   
+      if (shortUrlDetails.success) {
+        res.status(200).json({ success: true, shortUrl: shortUrlDetails.shortenUrl, orginalUrl: shortUrlDetails.originalUrl, updatedDate: 'just now' });
+      } else {
+        res.status(400).json({ success: false, error_message: shortUrlDetails.error_msg, error_code: shortUrlDetails.error_code });
+      }
+    }
   } catch (error) {
-    console.error('Error shortening URL:', error.message);
-    res.status(500).json({ success: false, message: 'Server error' });
+    console.error('Error shortening URL: error in getShortenUrl()');
+    res.status(500).json({ success: false, 
+                           error_code: error.code ? error.code: 'UNKNOWN', 
+                           error_msg: error.cause? error.cause: error.message });
 
   }
 };
 
-const createShortUrl = async (url, res)=>{
-  try {
-    //API to shorten the URL
-    const response = await axios.get(apiBaseUrl, { params: { 'url': url } });
+const createShortUrl = async (url, res) => {
+  
+  //API to shorten the URL
+  const response = await axios.get(apiBaseUrl, { params: { 'url': url } });
 
-    // Check if the response contains a short URL
-    if (response.data.ok && response.data.result) {
+  response.then(async (response) => {
 
-      const shortUrl = response.data.result.short_link;
+    const shortUrl = response.data.result.short_link;
 
-      const newShortenUrlList = new shortenUrlListModel({ 'originalUrl': url, shortenUrl: shortUrl });
+    const newShortenUrlList = new shortenUrlListModel({ 'originalUrl': url, shortenUrl: shortUrl });
 
-      await newShortenUrlList.save();
+    await newShortenUrlList.save();
 
-      return {success: true, 'originalUrl': url, shortenUrl: shortUrl};
-      
-    } 
-  }catch (err) {
-    console.error('Error while calling API to create short URL:', err.response.data);
-    var errorObj = await handleError(err.response);
-    if(errorObj.success === false){
+    return { success: true, 'originalUrl': url, shortenUrl: shortUrl };
+
+  }).catch(async (err) => {
+    let errResponse = (err.response) ? err.response : err.cause;
+    console.error('Error while calling API to create short URL.');
+    var errorObj = await handleError(errResponse);
+    if (errorObj.success === false) {
       res.status(400).json({ success: false, error_message: errorObj.error_msg, error_code: errorObj.error_code });
-      process.exit(0);
     } else {
-      res.status(500).json({ success: false, message: 'Server error' });
-      process.exit(0);
+      res.status(400).json({ success: false,error_code: err.code ? err.code: 'UNKNOWN', error_msg: err.message });
     }
+  });
+}
+
+const handleError = async (errorResponse) => {
+  if (errorResponse & errorResponse.data && errorResponse.data.error_code === 1) {
+    return { success: false, error_code: errorResponse.data.error_code, error_msg: 'Error: Enter long URL to get the short URL!' };
+  }
+  if (errorResponse & errorResponse.data && errorResponse.data.error_code === 10) {
+    return { success: false, error_code: errorResponse.data.error_code, error_msg: `Error: The link you entered is a disallowed link, ${errorResponse.data.disallowed_reason}` };
+  }
+  if (errorResponse) {
+    return { success: false, error_code: errorResponse.code, error_msg: JSON.stringify(errorResponse) };
   }
 
 }
 
-const handleError = async (errorResponse)=>{
-    if(errorResponse.data.error_code === 1){
-      return {success: false, error_code: errorResponse.data.error_code, error_msg: 'Error: Enter long URL to get the short URL!'};
-    }
-    if(errorResponse.data.error_code === 10){
-      return {success: false, error_code: errorResponse.data.error_code, error_msg: `Error: The link you entered is a disallowed link, ${errorResponse.data.disallowed_reason}`};
-    }
-}
-
 module.exports = getShortenUrl;
-
-
