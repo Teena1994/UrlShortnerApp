@@ -23,7 +23,6 @@ export class AppComponent {
   constructor(private apiService: ApiService, private formBuilder: FormBuilder) { }
 
   onSubmit(): void {
-    console.log( this.checkoutForm.value.longUrl);
     this.isCopied = false;
     this.apiService.getUrlDetails(this.checkoutForm.value.longUrl).subscribe({
       next: (response) => {
@@ -34,6 +33,7 @@ export class AppComponent {
         console.log(error);
         this.shorturlErr = error;
         this.shorturlSuccess = false;
+        window.alert( JSON.stringify(this.shorturlErr));
       },
       complete: () => {
         this.shortUrl = this.apiResponse.shortUrl;

@@ -22,24 +22,24 @@ const getShortenUrl = async (req, res) => {
     if(urlListFromMongo !== null){
       res.status(200).json({ success: true, shortUrl: urlListFromMongo.shortenUrl, orginalUrl: urlListFromMongo.originalUrl, updatedDate: urlListFromMongo.date});
     } else{
-      let shortUrlDetails = await createShortUrl(url);
+      let shortUrlDetails = await createShortUrl(url, res);
         if(shortUrlDetails.success){
           res.status(200).json({ success: true, shortUrl: shortUrlDetails.shortenUrl, orginalUrl: shortUrlDetails.originalUrl, updatedDate: 'just now' });
         } else {
-          res.status(400).json({ success: false, message: 'Failed to shorten URL' });
+          res.status(400).json({ success: false, error_message: shortUrlDetails.error_msg, error_code: shortUrlDetails.error_code });
         }
     }   
   } catch (error) {
     console.error('Error shortening URL:', error.message);
     res.status(500).json({ success: false, message: 'Server error' });
+
   }
 };
 
-const createShortUrl = async (url)=>{
+const createShortUrl = async (url, res)=>{
   try {
     //API to shorten the URL
     const response = await axios.get(apiBaseUrl, { params: { 'url': url } });
-    console.log(response);
 
     // Check if the response contains a short URL
     if (response.data.ok && response.data.result) {
@@ -52,12 +52,28 @@ const createShortUrl = async (url)=>{
 
       return {success: true, 'originalUrl': url, shortenUrl: shortUrl};
       
-    }
+    } 
   }catch (err) {
-    console.error('Error while calling API to create short URL:', err);
-    throw err;
+    console.error('Error while calling API to create short URL:', err.response.data);
+    var errorObj = await handleError(err.response);
+    if(errorObj.success === false){
+      res.status(400).json({ success: false, error_message: errorObj.error_msg, error_code: errorObj.error_code });
+      process.exit(0);
+    } else {
+      res.status(500).json({ success: false, message: 'Server error' });
+      process.exit(0);
+    }
   }
 
+}
+
+const handleError = async (errorResponse)=>{
+    if(errorResponse.data.error_code === 1){
+      return {success: false, error_code: errorResponse.data.error_code, error_msg: 'Error: Enter long URL to get the short URL!'};
+    }
+    if(errorResponse.data.error_code === 10){
+      return {success: false, error_code: errorResponse.data.error_code, error_msg: `Error: The link you entered is a disallowed link, ${errorResponse.data.disallowed_reason}`};
+    }
 }
 
 module.exports = getShortenUrl;
