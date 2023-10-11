@@ -35,6 +35,7 @@ export class AppComponent {
         console.log(error);
         this.shorturlErr = error;
         this.shorturlSuccess = false;
+        this.isLoading = false;
         window.alert( JSON.stringify(this.shorturlErr));
       },
       complete: () => {
