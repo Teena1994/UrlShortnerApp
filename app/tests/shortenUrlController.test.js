@@ -51,7 +51,6 @@ describe('POST API to check and fetch short url for the provided long url - erro
           chai.expect(res.body).to.be.an('object');
           chai.expect(res.body).to.have.property('success').to.equal(false);
           chai.expect(res.body).to.have.property('error_message');
-          chai.expect(res.body).to.have.property('error_code');
           done();
         }
       });

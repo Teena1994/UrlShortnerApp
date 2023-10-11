@@ -19,11 +19,13 @@ export class AppComponent {
   shorturlSuccess = false;
   updatedDate: any;
   isCopied: boolean = false;
+  isLoading: boolean = false;
 
   constructor(private apiService: ApiService, private formBuilder: FormBuilder) { }
 
   onSubmit(): void {
     this.isCopied = false;
+    this.isLoading = true;
     this.apiService.getUrlDetails(this.checkoutForm.value.longUrl).subscribe({
       next: (response) => {
         this.apiResponse = response;
@@ -33,6 +35,7 @@ export class AppComponent {
         console.log(error);
         this.shorturlErr = error;
         this.shorturlSuccess = false;
+        this.isLoading = false;
         window.alert( JSON.stringify(this.shorturlErr));
       },
       complete: () => {
@@ -44,17 +47,18 @@ export class AppComponent {
         }
         this.shorturlSuccess = true;
         this.checkoutForm.value.longUrl = "";
+        this.isLoading = false;
       },
 
     });
   }
 
   openNewTab() {
-    window.open(`https://${this.shortUrl}`, '_blank');
+    window.open(`${this.shortUrl}`, '_blank');
   }
   
   copyUrl(){
-    navigator.clipboard.writeText(`https://${this.shortUrl}`);
+    navigator.clipboard.writeText(`${this.shortUrl}`);
     this.isCopied = true;
   }
   goBack (){
