@@ -40,7 +40,7 @@ describe('AppComponent', () => {
     const spy = spyOn(navigator.clipboard, 'writeText').and.returnValue(Promise.resolve());
     component.shortUrl = 'shrtco.de/3YokP';
     component.copyUrl();
-    expect(spy).toHaveBeenCalledWith(`https://${component.shortUrl}`);
+    expect(spy).toHaveBeenCalledWith(`${component.shortUrl}`);
     expect(component.isCopied).toBe(true);
   });
 
@@ -48,7 +48,7 @@ describe('AppComponent', () => {
     const spy = spyOn(window, 'open');
     component.shortUrl = 'shrtco.de/3YokP';
     component.openNewTab();
-    expect(spy).toHaveBeenCalledWith(`https://${component.shortUrl}`, '_blank');
+    expect(spy).toHaveBeenCalledWith(`${component.shortUrl}`, '_blank');
   });
 
   it('should handle an error during form submission', () => {

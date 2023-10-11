@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: ./app
+    ports:
+      - "3000:3000"
+    environment:
+      MONGODB_URI: mongodb://127.0.0.1:27017/IDASO
+    depends_on:
+      - mongo
+
+  client:
+    build:
+      context: ./client
+    ports:
+      - "4200:80"
+    depends_on:
+      - app
+
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"

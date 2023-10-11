@@ -4,7 +4,7 @@
       <h1>URL Shortener</h1>
     </header>
     <main>
-      <div class="url-form" [hidden]="shorturlSuccess">
+      <div class="url-form" *ngIf="!shorturlSuccess && !isLoading">
         <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()">
           <label for="longUrl">Enter Long URL:</label>
           <div class="input-container">
@@ -12,12 +12,12 @@
             <button type="submit">Shorten</button>
           </div>
         </form>
-        <div class="shortened-text" [hidden]="shorturlSuccess">Unlock the power of URL Shortener and make sharing easier
+        <div class="shortened-text" *ngIf="!shorturlSuccess && !isLoading">Unlock the power of URL Shortener and make sharing easier
           than ever. Enter your long URL, and watch it transform into a stylish, shareable, and shortened link in an
           instant! </div>
       </div>
 
-      <div *ngIf="shorturlSuccess"  class="url-form">
+      <div *ngIf="shorturlSuccess" class="url-form">
           <label for="shortUrl">Short URL:  </label>
           <div class="input-container">
             <input type="text" id="shortUrl" style ="width: 70%;" class="url-form input" [value]="shortUrl" readonly>
@@ -32,6 +32,12 @@
         <div class="shortner-url-date"> Generated {{ updatedDate }}</div>
         <button class="btn btn-primary btn-sm ml-auto" (click)="goBack()"> Go Back </button>
       </div>
+
+      <div *ngIf="isLoading" class="loader-container">
+        <div class="loader"></div>
+        <div>Please wait while the short URL is generating...</div>
+      </div>
+
     </main>
   </div>
 </div>
