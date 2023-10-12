@@ -20,6 +20,7 @@ export class AppComponent {
   updatedDate: any;
   isCopied: boolean = false;
   isLoading: boolean = false;
+  redirectUrlData:any;
 
   constructor(private apiService: ApiService, private formBuilder: FormBuilder) { }
 
@@ -54,7 +55,26 @@ export class AppComponent {
   }
 
   openNewTab() {
-    window.open(`${this.shortUrl}`, '_blank');
+    this.isLoading = true;
+
+    this.apiService.redirectUrl(this.shortUrl).subscribe({
+      next: (response) => {
+        console.log('Received redirect URL Response:', response);
+        this.redirectUrlData = response;
+      },
+      error: (error) => {
+        console.log(error);
+        this.shorturlErr = error;
+        this.shorturlSuccess = false;
+        this.isLoading = false;
+        window.alert( JSON.stringify(this.shorturlErr));
+      },
+      complete: () => {
+        console.log('redirect API call completed.');
+        window.open(`${ this.redirectUrlData.orginalUrl}`, '_blank');
+        this.isLoading = false;
+      }
+    });
   }
   
   copyUrl(){

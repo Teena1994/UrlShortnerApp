@@ -1,8 +1,7 @@
-const axios = require('axios');
+const shortId = require("shortid");
 const shortenUrlListModel = require('../model/shortenUrlListModel');
 const NodeCache = require('node-cache');
 const myCache = new NodeCache();
-const apiBaseUrl = process.env.API_BASE_URL;
 var urlCacheDetails;
 
 /* Fetch all the list of urls from cache.
@@ -89,9 +88,9 @@ const createShortUrl = async (url, res) => {
 
   try {
 
-    //API to shorten the URL
-    const response = await axios.get(apiBaseUrl, { params: { 'url': url } });
-    const shortUrl = response.data;
+    //Shorten the URL
+    const id = shortId.generate();
+    const shortUrl = `${process.env.API_BASE_URL}${id}`;
 
     //Store url details in MongoDB
     const newShortenUrlList = new shortenUrlListModel({ 'originalUrl': url, shortenUrl: shortUrl });
@@ -128,4 +127,24 @@ const handleError = async (errorResponse) => {
   }
 }
 
-module.exports = getShortenUrl;
+const redirectShortenUrl = async (req, res) => {
+  try{
+    const { url } = req.query;
+
+    //Check whether url is present in mongoDb or not
+    const urlListFromMongo = await shortenUrlListModel.findOne({ 'shortenUrl': url }, { originalUrl: 1, shortenUrl: 1 });
+    
+    if (urlListFromMongo !== null) {
+      res.status(200).json({ success: true, shortUrl: url, orginalUrl: urlListFromMongo.originalUrl});
+    } else {
+      res.status(404).json({ success: false, error_message: 'Redirect URL not found' });
+    }
+  } catch(err) {
+    res.status(400).json({ success: false, error_message: err.message });
+  }
+}
+
+module.exports = {
+  getShortenUrl,
+  redirectShortenUrl
+};
