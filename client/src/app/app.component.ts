@@ -16,6 +16,7 @@ export class AppComponent {
   apiResponse: any;
   shortUrl ='';
   shorturlErr = '';
+  redirectUrlData:any;
   shorturlSuccess = false;
   updatedDate: any;
   isCopied: boolean = false;
@@ -52,10 +53,6 @@ export class AppComponent {
 
     });
   }
-
-  openNewTab() {
-    window.open(`${this.shortUrl}`, '_blank');
-  }
   
   copyUrl(){
     navigator.clipboard.writeText(`${this.shortUrl}`);
@@ -65,4 +62,28 @@ export class AppComponent {
     this.checkoutForm.reset();
     this.shorturlSuccess = !this.shorturlSuccess;
   }
+
+  openNewTab (){
+    this.isLoading = true;
+
+    this.apiService.redirectUrl(this.shortUrl).subscribe({
+      next: (response) => {
+        console.log('Received redirect URL Response:', response);
+        this.redirectUrlData = response;
+      },
+      error: (error) => {
+        console.log(error);
+        this.shorturlErr = error;
+        this.shorturlSuccess = false;
+        this.isLoading = false;
+        window.alert( JSON.stringify(this.shorturlErr));
+      },
+      complete: () => {
+        console.log('redirect API call completed.');
+        window.open(`${ this.redirectUrlData.orginalUrl}`, '_blank');
+        this.isLoading = false;
+      }
+    });     
+  }
 }
+

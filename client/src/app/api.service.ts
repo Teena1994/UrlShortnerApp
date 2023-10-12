@@ -14,4 +14,9 @@ export class ApiService {
   getUrlDetails(urlData: any): Observable<any> {
     return this.http.post(`${this.apiUrl}?url=${urlData}`,{});
   }
+
+  //Redirect Url
+  redirectUrl(urlData: any): Observable<any> {
+    return this.http.get(`${this.apiUrl}?url=${urlData}`);
+  }
 }
